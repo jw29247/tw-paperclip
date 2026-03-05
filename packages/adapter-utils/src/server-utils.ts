@@ -234,17 +234,17 @@ export async function runChildProcess(
     const timeout =
       opts.timeoutSec > 0
         ? setTimeout(() => {
-            timedOut = true;
-            child.kill("SIGTERM");
-            setTimeout(() => {
-              if (!child.killed) {
-                child.kill("SIGKILL");
-              }
-            }, Math.max(1, opts.graceSec) * 1000);
-          }, opts.timeoutSec * 1000)
+          timedOut = true;
+          child.kill("SIGTERM");
+          setTimeout(() => {
+            if (!child.killed) {
+              child.kill("SIGKILL");
+            }
+          }, Math.max(1, opts.graceSec) * 1000);
+        }, opts.timeoutSec * 1000)
         : null;
 
-    child.stdout?.on("data", (chunk) => {
+    child.stdout?.on("data", (chunk: Buffer | string) => {
       const text = String(chunk);
       stdout = appendWithCap(stdout, text);
       logChain = logChain
@@ -252,7 +252,7 @@ export async function runChildProcess(
         .catch((err) => onLogError(err, runId, "failed to append stdout log chunk"));
     });
 
-    child.stderr?.on("data", (chunk) => {
+    child.stderr?.on("data", (chunk: Buffer | string) => {
       const text = String(chunk);
       stderr = appendWithCap(stderr, text);
       logChain = logChain

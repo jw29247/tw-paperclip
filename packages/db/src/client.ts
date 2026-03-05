@@ -32,13 +32,13 @@ function splitMigrationStatements(content: string): string[] {
 export type MigrationState =
   | { status: "upToDate"; tableCount: number; availableMigrations: string[]; appliedMigrations: string[] }
   | {
-      status: "needsMigrations";
-      tableCount: number;
-      availableMigrations: string[];
-      appliedMigrations: string[];
-      pendingMigrations: string[];
-      reason: "no-migration-journal-empty-db" | "no-migration-journal-non-empty-db" | "pending-migrations";
-    };
+    status: "needsMigrations";
+    tableCount: number;
+    availableMigrations: string[];
+    appliedMigrations: string[];
+    pendingMigrations: string[];
+    reason: "no-migration-journal-empty-db" | "no-migration-journal-non-empty-db" | "pending-migrations";
+  };
 
 export function createDb(url: string) {
   const sql = postgres(url);
@@ -48,9 +48,9 @@ export function createDb(url: string) {
 async function listMigrationFiles(): Promise<string[]> {
   const entries = await readdir(MIGRATIONS_FOLDER, { withFileTypes: true });
   return entries
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".sql"))
-    .map((entry) => entry.name)
-    .sort((a, b) => a.localeCompare(b));
+    .filter((entry: any) => entry.isFile() && entry.name.endsWith(".sql"))
+    .map((entry: any) => entry.name)
+    .sort((a: string, b: string) => a.localeCompare(b));
 }
 
 type MigrationJournalFile = {
@@ -494,13 +494,13 @@ export async function reconcilePendingMigrationHistory(
       const folderMillis = folderMillisByFile.get(migrationFile) ?? Date.now();
       const existingByHash = columnNames.has("hash")
         ? await sql.unsafe<{ created_at: string | number | null }[]>(
-            `SELECT created_at FROM ${qualifiedTable} WHERE hash = ${quoteLiteral(hash)} ORDER BY created_at DESC LIMIT 1`,
-          )
+          `SELECT created_at FROM ${qualifiedTable} WHERE hash = ${quoteLiteral(hash)} ORDER BY created_at DESC LIMIT 1`,
+        )
         : [];
       const existingByName = columnNames.has("name")
         ? await sql.unsafe<{ created_at: string | number | null }[]>(
-            `SELECT created_at FROM ${qualifiedTable} WHERE name = ${quoteLiteral(migrationFile)} ORDER BY created_at DESC LIMIT 1`,
-          )
+          `SELECT created_at FROM ${qualifiedTable} WHERE name = ${quoteLiteral(migrationFile)} ORDER BY created_at DESC LIMIT 1`,
+        )
         : [];
       if (existingByHash.length > 0 || existingByName.length > 0) {
         if (columnNames.has("created_at")) {

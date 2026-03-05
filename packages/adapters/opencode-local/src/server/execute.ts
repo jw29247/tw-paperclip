@@ -82,9 +82,9 @@ function parseProviderModelNotFoundDetails(
   const suggestionsMatch = haystack.match(/suggestions:\s*\[([^\]]*)\]/i);
   const suggestions = suggestionsMatch
     ? Array.from(
-        suggestionsMatch[1].matchAll(/"([^"]+)"/g),
-        (match) => match[1].trim(),
-      ).filter((value) => value.length > 0)
+      suggestionsMatch[1].matchAll(/"([^"]+)"/g),
+      (match) => match[1].trim(),
+    ).filter((value) => value.length > 0)
     : [];
 
   return {
@@ -117,7 +117,7 @@ function claudeSkillsHome(): string {
 
 async function resolvePaperclipSkillsDir(): Promise<string | null> {
   for (const candidate of PAPERCLIP_SKILLS_CANDIDATES) {
-    const isDir = await fs.stat(candidate).then((s) => s.isDirectory()).catch(() => false);
+    const isDir = await fs.stat(candidate).then((s: any) => s.isDirectory()).catch(() => false);
     if (isDir) return candidate;
   }
   return null;
@@ -171,8 +171,8 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
   const workspaceRepoRef = asString(workspaceContext.repoRef, "");
   const workspaceHints = Array.isArray(context.paperclipWorkspaces)
     ? context.paperclipWorkspaces.filter(
-        (value): value is Record<string, unknown> => typeof value === "object" && value !== null,
-      )
+      (value): value is Record<string, unknown> => typeof value === "object" && value !== null,
+    )
     : [];
   const configuredCwd = asString(config.cwd, "");
   const useConfiguredInsteadOfAgentHome = workspaceSource === "agent_home" && configuredCwd.length > 0;
@@ -393,12 +393,12 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     const resolvedSessionId = attempt.parsed.sessionId ?? runtimeSessionId ?? runtime.sessionId ?? null;
     const resolvedSessionParams = resolvedSessionId
       ? ({
-          sessionId: resolvedSessionId,
-          cwd,
-          ...(workspaceId ? { workspaceId } : {}),
-          ...(workspaceRepoUrl ? { repoUrl: workspaceRepoUrl } : {}),
-          ...(workspaceRepoRef ? { repoRef: workspaceRepoRef } : {}),
-        } as Record<string, unknown>)
+        sessionId: resolvedSessionId,
+        cwd,
+        ...(workspaceId ? { workspaceId } : {}),
+        ...(workspaceRepoUrl ? { repoUrl: workspaceRepoUrl } : {}),
+        ...(workspaceRepoRef ? { repoRef: workspaceRepoRef } : {}),
+      } as Record<string, unknown>)
       : null;
     const parsedError = typeof attempt.parsed.errorMessage === "string" ? attempt.parsed.errorMessage.trim() : "";
     const stderrLine = firstNonEmptyLine(attempt.proc.stderr);
@@ -406,8 +406,8 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     const fallbackErrorMessage = modelNotFound
       ? formatModelNotFoundError(model, providerFromModel, modelNotFound)
       : parsedError ||
-        stderrLine ||
-        `OpenCode exited with code ${attempt.proc.exitCode ?? -1}`;
+      stderrLine ||
+      `OpenCode exited with code ${attempt.proc.exitCode ?? -1}`;
 
     return {
       exitCode: attempt.proc.exitCode,

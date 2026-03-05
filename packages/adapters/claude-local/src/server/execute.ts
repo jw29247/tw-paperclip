@@ -35,7 +35,7 @@ const PAPERCLIP_SKILLS_CANDIDATES = [
 
 async function resolvePaperclipSkillsDir(): Promise<string | null> {
   for (const candidate of PAPERCLIP_SKILLS_CANDIDATES) {
-    const isDir = await fs.stat(candidate).then((s) => s.isDirectory()).catch(() => false);
+    const isDir = await fs.stat(candidate).then((s: any) => s.isDirectory()).catch(() => false);
     if (isDir) return candidate;
   }
   return null;
@@ -120,8 +120,8 @@ async function buildClaudeRuntimeConfig(input: ClaudeExecutionInput): Promise<Cl
   const workspaceRepoRef = asString(workspaceContext.repoRef, "") || null;
   const workspaceHints = Array.isArray(context.paperclipWorkspaces)
     ? context.paperclipWorkspaces.filter(
-        (value): value is Record<string, unknown> => typeof value === "object" && value !== null,
-      )
+      (value): value is Record<string, unknown> => typeof value === "object" && value !== null,
+    )
     : [];
   const configuredCwd = asString(config.cwd, "");
   const useConfiguredInsteadOfAgentHome = workspaceSource === "agent_home" && configuredCwd.length > 0;
@@ -236,7 +236,7 @@ export async function runClaudeLogin(input: {
   authToken?: string;
   onLog?: (stream: "stdout" | "stderr", chunk: string) => Promise<void>;
 }) {
-  const onLog = input.onLog ?? (async () => {});
+  const onLog = input.onLog ?? (async () => { });
   const runtime = await buildClaudeRuntimeConfig({
     runId: input.runId,
     agent: input.agent,
@@ -281,8 +281,8 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
   const instructionsFileDir = instructionsFilePath ? `${path.dirname(instructionsFilePath)}/` : "";
   const commandNotes = instructionsFilePath
     ? [
-        `Injected agent instructions via --append-system-prompt-file ${instructionsFilePath} (with path directive appended)`,
-      ]
+      `Injected agent instructions via --append-system-prompt-file ${instructionsFilePath} (with path directive appended)`,
+    ]
     : [];
 
   const runtimeConfig = await buildClaudeRuntimeConfig({
@@ -419,8 +419,8 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
     const errorMeta =
       loginMeta.loginUrl != null
         ? {
-            loginUrl: loginMeta.loginUrl,
-          }
+          loginUrl: loginMeta.loginUrl,
+        }
         : undefined;
 
     if (proc.timedOut) {
@@ -519,6 +519,6 @@ export async function execute(ctx: AdapterExecutionContext): Promise<AdapterExec
 
     return toAdapterResult(initial, { fallbackSessionId: runtimeSessionId || runtime.sessionId });
   } finally {
-    fs.rm(skillsDir, { recursive: true, force: true }).catch(() => {});
+    fs.rm(skillsDir, { recursive: true, force: true }).catch(() => { });
   }
 }

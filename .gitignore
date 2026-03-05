@@ -37,4 +37,3 @@ tmp/
 .vscode/
 .claude/settings.local.json
 .paperclip-local/
-pnpm-lock.yaml
