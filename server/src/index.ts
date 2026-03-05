@@ -375,7 +375,7 @@ if (config.databaseUrl) {
 if (config.deploymentMode === "local_trusted" && !isLoopbackHost(config.host)) {
   throw new Error(
     `local_trusted mode requires loopback host binding (received: ${config.host}). ` +
-      "Use authenticated mode for non-loopback deployments.",
+    "Use authenticated mode for non-loopback deployments.",
   );
 }
 
@@ -444,7 +444,7 @@ const app = await createApp(db as any, {
   betterAuthHandler,
   resolveSession,
 });
-const server = createServer(app);
+const server = createServer(app as any);
 const listenPort = await detectPort(config.port);
 
 if (listenPort !== config.port) {
