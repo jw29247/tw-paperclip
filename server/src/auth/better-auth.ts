@@ -1,5 +1,5 @@
 import type { Request, RequestHandler } from "express";
-import type { IncomingHttpHeaders } from "node:http";
+import type { IncomingHttpHeaders } from "http";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { toNodeHandler } from "better-auth/node";
@@ -99,10 +99,10 @@ export async function resolveBetterAuthSessionFromHeaders(
     : null;
   const user = value.user?.id
     ? {
-        id: value.user.id,
-        email: value.user.email ?? null,
-        name: value.user.name ?? null,
-      }
+      id: value.user.id,
+      email: value.user.email ?? null,
+      name: value.user.name ?? null,
+    }
     : null;
 
   if (!session || !user) return null;
